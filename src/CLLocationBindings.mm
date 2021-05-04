@@ -15,9 +15,11 @@ void getCurrentPosition(const FunctionCallbackInfo<Value>& args) {
 
   if (args.Length() == 1) {
     if (args[0]->IsObject()) {
-      Local<Object> options = args[0]->ToObject();
+      Local<Context> context = isolate->GetCurrentContext();
+      MaybeLocal<Object> options = args[0]->ToObject(context);
 
-      Local<String> maximumAgeKey = String::NewFromUtf8(isolate, "maximumAge");
+
+      MaybeLocal<String> maximumAgeKey = v8::String::NewFromUtf8(isolate, "maximumAge");
       if (options->Has(maximumAgeKey)) {
         // Anything less than 100ms doesn't make any sense
         locationManager.maximumAge = fmax(
@@ -26,7 +28,7 @@ void getCurrentPosition(const FunctionCallbackInfo<Value>& args) {
         locationManager.maximumAge /= 1000.0;
       }
 
-      Local<String> enableHighAccuracyKey = String::NewFromUtf8(
+      MaybeLocal<String> enableHighAccuracyKey = String::NewFromUtf8(
         isolate, "enableHighAccuracy"
       );
       if (options->Has(enableHighAccuracyKey)) {
@@ -35,7 +37,7 @@ void getCurrentPosition(const FunctionCallbackInfo<Value>& args) {
         )->BooleanValue();
       }
 
-      Local<String> timeout = String::NewFromUtf8(
+      MaybeLocal<String> timeout = String::NewFromUtf8(
         isolate, "timeout"
       );
       if (options->Has(timeout)) {
